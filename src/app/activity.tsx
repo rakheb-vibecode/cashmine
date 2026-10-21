@@ -53,7 +53,8 @@ export default function ActivityScreen() {
   }
 
   const loadMore = () => {
-    if (activity.hasNextPage && !activity.isFetchingNextPage && !activity.isFetchNextPageError) {
+    // isFetching, not isFetchingNextPage: fetchNextPage during a pull-to-refresh would cancel the refetch.
+    if (activity.hasNextPage && !activity.isFetching && !activity.isFetchNextPageError) {
       void activity.fetchNextPage();
     }
   };
