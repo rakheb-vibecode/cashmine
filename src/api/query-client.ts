@@ -1,6 +1,7 @@
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 
 import { saveSubmission } from '@/lib/claim-submit';
+import { pendingClaimsAtom } from '@/state/pendingClaims';
 import { appStore } from '@/state/store';
 import { signOutReasonAtom, tokenAtom } from '@/state/token';
 
@@ -15,6 +16,8 @@ export function signOut(reason: string | null = null) {
   queryClient.clear();
   // An unresolved claim belongs to this token; resuming it under another token would claim on that account.
   saveSubmission(null);
+  // The overlay is persisted too; another token's balances must not show this account's claims.
+  appStore.set(pendingClaimsAtom, []);
 }
 
 function onApiError(error: unknown) {
