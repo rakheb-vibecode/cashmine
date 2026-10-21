@@ -1,56 +1,25 @@
-# Welcome to your Expo app 👋
+# CashMine
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Payback balances and claims, built with Expo SDK 58 + TypeScript (web build, sized for a ~390px phone).
 
-## Get started
+**Live:** https://cashmine.expo.app
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run locally
 
 ```bash
-npm run reset-project
+npm i
+npx expo start --web
+npm test
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+On first open the app asks for your API token. It is kept in this browser's localStorage and never in the code, repo or build. Use "Change token" on Home to switch tokens.
 
-### Other setup steps
+## What works
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+- **Balances (Home):** available, pending and claiming per asset, total in USD, "Updated Xs ago", pull-to-refresh and a Refresh button, auto-refresh every 15s, loading / error + retry / stale-data banner, 401 sends you back to the token screen, 429 waits `retryAfterMs`.
+- **Claim:** pick an asset, enter an amount or Max, live validation against the API rules (format, decimals, min, available, fee), fee and receive amount, review + confirm, then a status screen that polls until completed or failed.
+- **Unknown claim outcome:** one Idempotency-Key per submission, persisted and retried with the same body, so a timeout can never create a second claim; resumes after reload.
+- **Activity:** paginated history (accruals, reversals, claims) with infinite scroll, "Load more" fallback, pull-to-refresh; claim rows open their status.
+- **Tests:** unit tests for amount parsing, validation, fee, totals, the claim retry logic, the balance overlay and API error mapping (`npm test`).
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Design decisions and known issues: [NOTES.md](NOTES.md). AI session logs: [ai-logs/](ai-logs/).
