@@ -14,7 +14,8 @@ import {
 
 import { queryKeys, useBalances, useToken } from '@/api/queries';
 import { queryClient, signOut } from '@/api/query-client';
-import { createClaim, getClaimOptions } from '@/api/services';
+import { getClaimOptions } from '@/api/claim-options';
+import { createClaim } from '@/api/claims';
 import { Row, styles } from '@/components/claim-ui';
 import { Colors } from '@/constants/theme';
 import { formatAmount, validateClaimAmount, type ClaimAmountError } from '@/lib/amount';

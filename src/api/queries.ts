@@ -3,7 +3,8 @@ import { useAtomValue } from 'jotai';
 
 import { tokenAtom } from '@/state/token';
 
-import { getActivity, getBalances } from './services';
+import { getActivity } from './activity';
+import { getBalances } from './balances';
 
 export const queryKeys = {
   balances: ['balances'] as const,

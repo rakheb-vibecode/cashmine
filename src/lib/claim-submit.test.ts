@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import { ApiError } from '@/api/client';
+import { ApiError } from '@/api/http';
 import type { Claim } from '@/api/types';
 
 import { submitRetryDelayMs, submitWithRetry, type ClaimSubmission } from './claim-submit';

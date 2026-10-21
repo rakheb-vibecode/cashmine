@@ -5,7 +5,7 @@ import { pendingClaimsAtom } from '@/state/pendingClaims';
 import { appStore } from '@/state/store';
 import { signOutReasonAtom, tokenAtom } from '@/state/token';
 
-import { isApiError } from './client';
+import { isApiError } from './http';
 
 const MAX_QUERY_RETRIES = 3;
 

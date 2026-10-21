@@ -1,4 +1,4 @@
-import { isApiError, type ApiError } from '@/api/client';
+import { isApiError, type ApiError } from '@/api/http';
 import type { Claim, CreateClaimBody } from '@/api/types';
 
 import { readItem, writeItem } from './storage';

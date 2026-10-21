@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
 
-import { ApiError, apiRequest } from './client';
+import { ApiError, apiRequest } from './http';
 
 const realFetch = globalThis.fetch;
 afterEach(() => {

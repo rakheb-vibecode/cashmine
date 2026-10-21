@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 
-import { isApiError } from '@/api/client';
+import { isApiError } from '@/api/http';
 import { useBalances } from '@/api/queries';
 import { signOut } from '@/api/query-client';
 import type { Balance } from '@/api/types';

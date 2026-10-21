@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 
-import { isApiError } from '@/api/client';
+import { isApiError } from '@/api/http';
 import { useActivity } from '@/api/queries';
 import type { ActivityItem, ActivityStatus } from '@/api/types';
 import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';

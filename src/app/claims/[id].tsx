@@ -6,7 +6,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-nati
 
 import { queryKeys, useBalances, useToken } from '@/api/queries';
 import { queryClient } from '@/api/query-client';
-import { getClaim } from '@/api/services';
+import { getClaim } from '@/api/claims';
 import { Row, styles } from '@/components/claim-ui';
 import { Colors } from '@/constants/theme';
 import { formatAmount } from '@/lib/amount';
