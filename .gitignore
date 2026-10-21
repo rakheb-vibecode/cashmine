@@ -43,3 +43,7 @@ example
 /android
 .env
 .context/
+
+# playwright
+test-results/
+playwright-report/
