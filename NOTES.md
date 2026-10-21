@@ -24,4 +24,4 @@ Workflow: one planning session in Claude Code produced the decisions and four pr
 
 - Not tested end-to-end against the real API by the agents (they never read the token); the logic is unit-tested and the web build compiles. TODO(me): say what you checked by hand with your token.
 - Native storage paths are typechecked but not run on a device or simulator (only the web build was checked).
-- No end-to-end or component tests; tests cover pure logic only. Light theme only.
+- E2E covers web only (Playwright, API mocked). For iOS/Android the next step is Maestro flows reusing the same scenarios with shared `testID`s. No component tests. Light theme only.
