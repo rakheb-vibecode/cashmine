@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { randomUUID } from 'expo-crypto';
 import { Link, router, Stack, useLocalSearchParams } from 'expo-router';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
@@ -189,7 +190,7 @@ export default function ClaimScreen() {
     const confirm = () => {
       if (running.current) return;
       const sub: ClaimSubmission = {
-        key: crypto.randomUUID(),
+        key: randomUUID(),
         body: { asset, amount, destinationId: destination.id },
       };
       saveSubmission(sub); // before sending, so a reload mid-request resumes with this key
