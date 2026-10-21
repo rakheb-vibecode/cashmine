@@ -46,6 +46,11 @@ export default function HomeScreen() {
     <Stack.Screen
       options={{
         title: 'Balances',
+        headerLeft: () => (
+          <Link href="/activity" style={styles.link}>
+            Activity
+          </Link>
+        ),
         headerRight: () => (
           <Pressable accessibilityRole="button" onPress={() => signOut()} hitSlop={8}>
             <Text style={styles.link}>Change token</Text>

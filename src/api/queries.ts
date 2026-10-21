@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 
 import { tokenAtom } from '@/state/token';
 
-import { getBalances } from './services';
+import { getActivity, getBalances } from './services';
 
 export const queryKeys = {
   balances: ['balances'] as const,
@@ -28,5 +28,15 @@ export function useBalances() {
     queryKey: queryKeys.balances,
     queryFn: ({ signal }) => getBalances(token, signal),
     refetchInterval: BALANCES_REFETCH_MS,
+  });
+}
+
+export function useActivity() {
+  const token = useToken();
+  return useInfiniteQuery({
+    queryKey: queryKeys.activity,
+    queryFn: ({ pageParam, signal }) => getActivity(token, pageParam, signal),
+    initialPageParam: null as string | null,
+    getNextPageParam: (last) => last.nextCursor,
   });
 }
