@@ -119,7 +119,7 @@ function ActivityRow({ item }: { item: ActivityItem }) {
     <>
       <View style={styles.row}>
         <Text style={styles.title}>
-          {TYPE_LABEL[item.type]} · {item.exchange ?? 'Claim'}
+          {item.exchange ? `${TYPE_LABEL[item.type]} · ${item.exchange}` : TYPE_LABEL[item.type]}
         </Text>
         <Text style={[styles.amount, negative && { color: Colors.danger }]}>
           {negative ? '' : '+'}

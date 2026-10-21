@@ -46,13 +46,14 @@ export default function HomeScreen() {
     <Stack.Screen
       options={{
         title: 'Balances',
+        headerTitleAlign: 'center',
         headerLeft: () => (
-          <Link href="/activity" style={styles.link}>
+          <Link href="/activity" style={[styles.link, styles.headerLeft]}>
             Activity
           </Link>
         ),
         headerRight: () => (
-          <Pressable accessibilityRole="button" onPress={() => signOut()} hitSlop={8}>
+          <Pressable accessibilityRole="button" onPress={() => signOut()} hitSlop={8} style={styles.headerRight}>
             <Text style={styles.link}>Change token</Text>
           </Pressable>
         ),
@@ -199,6 +200,8 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   muted: { fontSize: 14, color: Colors.textSecondary },
   link: { color: Colors.primary, fontSize: 15 },
+  headerLeft: { paddingLeft: Spacing.three },
+  headerRight: { paddingRight: Spacing.three },
   disabled: { opacity: 0.5 },
   banner: {
     marginTop: Spacing.two,
