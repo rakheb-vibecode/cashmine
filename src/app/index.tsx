@@ -1,4 +1,4 @@
-import { router, Stack } from 'expo-router';
+import { Link, router, Stack } from 'expo-router';
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import {
@@ -17,6 +17,7 @@ import { signOut } from '@/api/query-client';
 import type { Balance } from '@/api/types';
 import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
 import { assetTotal, formatAmount, formatUsd, toUsd, totalUsd } from '@/lib/amount';
+import { loadSubmission } from '@/lib/claim-submit';
 import { applyPendingClaims, isNotInSnapshot, pendingClaimsAtom } from '@/state/pendingClaims';
 
 function errorMessage(error: unknown): string {
@@ -29,6 +30,8 @@ export default function HomeScreen() {
   const balances = useBalances();
   const [pendingClaims, setPendingClaims] = useAtom(pendingClaimsAtom);
   const asOf = balances.data?.asOf;
+  // A claim whose outcome we never learned: send the user back to finish it, not to claim again.
+  const unresolved = loadSubmission();
 
   // Once a snapshot is newer than a claim, the server numbers include it: drop it from the overlay.
   useEffect(() => {
@@ -111,6 +114,13 @@ export default function HomeScreen() {
               </Text>
             </Pressable>
           </View>
+          {unresolved && (
+            <Link
+              href={{ pathname: '/claim/[asset]', params: { asset: unresolved.body.asset } }}
+              style={[styles.banner, styles.bannerText]}>
+              Your {unresolved.body.asset} claim is still being confirmed. Tap to check it.
+            </Link>
+          )}
           {balances.isError && (
             <View style={styles.banner} accessibilityRole="alert">
               <Text style={styles.bannerText}>
