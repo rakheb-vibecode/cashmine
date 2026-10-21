@@ -31,6 +31,7 @@ export default function ClaimStatusScreen() {
     // Failed: the amount is available again. Completed stays in the overlay until a snapshot includes it.
     if (status === 'failed') removePendingClaim(id);
     void queryClient.invalidateQueries({ queryKey: queryKeys.balances });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.activity });
   }, [status, id, removePendingClaim]);
 
   const header = <Stack.Screen options={{ title: 'Claim status' }} />;
