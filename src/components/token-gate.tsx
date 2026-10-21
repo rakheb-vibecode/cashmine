@@ -1,10 +1,10 @@
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
-import { tokenAtom } from '@/state/token';
+import { signOutReasonAtom, tokenAtom } from '@/state/token';
 
 // Renders children only once an API token is stored. Clearing the token
 // (header button, or a 401 from the API) brings this screen back.
@@ -16,11 +16,14 @@ export function TokenGate({ children }: { children: ReactNode }) {
 
 function TokenScreen() {
   const setToken = useSetAtom(tokenAtom);
+  const [reason, setReason] = useAtom(signOutReasonAtom);
   const [value, setValue] = useState('');
   const trimmed = value.trim();
 
   const save = () => {
-    if (trimmed) setToken(trimmed);
+    if (!trimmed) return;
+    setReason(null);
+    setToken(trimmed);
   };
 
   return (
@@ -30,6 +33,11 @@ function TokenScreen() {
         <Text style={styles.hint}>
           Paste your API token to continue. It is stored only in this browser.
         </Text>
+        {reason && (
+          <Text accessibilityRole="alert" style={styles.reason}>
+            {reason}
+          </Text>
+        )}
         <TextInput
           accessibilityLabel="API token"
           value={value}
@@ -65,6 +73,7 @@ const styles = StyleSheet.create({
   card: { width: '100%', maxWidth: MaxContentWidth, gap: Spacing.three },
   title: { fontSize: 28, fontWeight: '700', color: Colors.text },
   hint: { fontSize: 15, color: Colors.textSecondary },
+  reason: { fontSize: 15, color: Colors.danger },
   input: {
     borderWidth: 1,
     borderColor: Colors.border,

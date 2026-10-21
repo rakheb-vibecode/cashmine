@@ -1,3 +1,4 @@
+import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 export const TOKEN_STORAGE_KEY = 'cashmine.token';
@@ -56,3 +57,6 @@ const tokenStorage: TokenStorage = {
 export const tokenAtom = atomWithStorage<string | null>(TOKEN_STORAGE_KEY, null, tokenStorage, {
   getOnInit: true,
 });
+
+/** Why the user was sent back to the token screen (e.g. a 401), if not by choice. */
+export const signOutReasonAtom = atom<string | null>(null);

@@ -1,21 +1,24 @@
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 
 import { appStore } from '@/state/store';
-import { tokenAtom } from '@/state/token';
+import { signOutReasonAtom, tokenAtom } from '@/state/token';
 
 import { isApiError } from './client';
 
 const MAX_QUERY_RETRIES = 3;
 
-/** Clears the token and all cached data of the previous token. */
-export function signOut() {
+/** Clears the token and all cached data of the previous token. `reason` is shown on the token screen. */
+export function signOut(reason: string | null = null) {
+  appStore.set(signOutReasonAtom, reason);
   appStore.set(tokenAtom, null);
   queryClient.clear();
 }
 
 function onApiError(error: unknown) {
   // Token missing/invalid/expired anywhere -> back to the token screen.
-  if (isApiError(error) && error.isUnauthorized) signOut();
+  if (isApiError(error) && error.isUnauthorized) {
+    signOut('Your token was rejected or has expired. Enter a valid token.');
+  }
 }
 
 export const queryClient: QueryClient = new QueryClient({
