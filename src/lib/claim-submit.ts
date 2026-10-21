@@ -1,6 +1,8 @@
 import { isApiError, type ApiError } from '@/api/client';
 import type { Claim, CreateClaimBody } from '@/api/types';
 
+import { readItem, writeItem } from './storage';
+
 /** A POST /v1/claims we started but have not resolved yet. Same key + body on every retry. */
 export type ClaimSubmission = { key: string; body: CreateClaimBody };
 
@@ -51,25 +53,26 @@ export async function submitWithRetry(
 }
 
 // ---- persistence -------------------------------------------------------------
-// shortcut: web localStorage only (native has none, so a native app restart loses it); use
-// expo-secure-store / AsyncStorage if this ships natively.
+// Kept in memory so the screens can read it synchronously; hydrateSubmission() loads
+// the stored copy once at startup, before any screen renders.
 
 const STORAGE_KEY = 'cashmine.claimSubmission';
+let current: ClaimSubmission | null = null;
 
-export function loadSubmission(): ClaimSubmission | null {
+export async function hydrateSubmission(): Promise<void> {
+  const raw = await readItem(STORAGE_KEY);
   try {
-    const raw = globalThis.localStorage?.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as ClaimSubmission) : null;
+    current = raw ? (JSON.parse(raw) as ClaimSubmission) : null;
   } catch {
-    return null;
+    current = null;
   }
 }
 
+export function loadSubmission(): ClaimSubmission | null {
+  return current;
+}
+
 export function saveSubmission(s: ClaimSubmission | null): void {
-  try {
-    if (s) globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(s));
-    else globalThis.localStorage?.removeItem(STORAGE_KEY);
-  } catch {
-    // Storage blocked: the in-memory submission still drives the retries for this session.
-  }
+  current = s;
+  writeItem(STORAGE_KEY, s ? JSON.stringify(s) : null);
 }

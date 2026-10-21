@@ -1,15 +1,25 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useState, type ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
+import { hydratedAtom } from '@/state/hydrate';
 import { signOutReasonAtom, tokenAtom } from '@/state/token';
 
 // Renders children only once an API token is stored. Clearing the token
 // (header button, or a 401 from the API) brings this screen back.
 export function TokenGate({ children }: { children: ReactNode }) {
+  const hydrated = useAtomValue(hydratedAtom);
   const token = useAtomValue(tokenAtom);
+  // Storage reads are async on native: don't flash the token screen before they finish.
+  if (!hydrated) {
+    return (
+      <View style={styles.safe}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
   if (!token) return <TokenScreen />;
   return children;
 }
@@ -31,7 +41,7 @@ function TokenScreen() {
       <View style={styles.card}>
         <Text style={styles.title}>CashMine</Text>
         <Text style={styles.hint}>
-          Paste your API token to continue. It is stored only in this browser.
+          Paste your API token to continue. It is stored only on this device.
         </Text>
         {reason && (
           <Text accessibilityRole="alert" style={styles.reason}>
