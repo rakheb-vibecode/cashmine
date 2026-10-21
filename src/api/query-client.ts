@@ -1,5 +1,6 @@
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 
+import { saveSubmission } from '@/lib/claim-submit';
 import { appStore } from '@/state/store';
 import { signOutReasonAtom, tokenAtom } from '@/state/token';
 
@@ -12,6 +13,8 @@ export function signOut(reason: string | null = null) {
   appStore.set(signOutReasonAtom, reason);
   appStore.set(tokenAtom, null);
   queryClient.clear();
+  // An unresolved claim belongs to this token; resuming it under another token would claim on that account.
+  saveSubmission(null);
 }
 
 function onApiError(error: unknown) {
