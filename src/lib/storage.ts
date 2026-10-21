@@ -8,7 +8,6 @@ type Options = { secure?: boolean };
 
 const isSecure = (o?: Options) => !!o?.secure && Platform.OS !== 'web';
 
-/** Never throws: blocked or broken storage reads as "nothing stored". */
 export async function readItem(key: string, o?: Options): Promise<string | null> {
   try {
     return isSecure(o) ? await SecureStore.getItemAsync(key) : await AsyncStorage.getItem(key);
@@ -18,7 +17,6 @@ export async function readItem(key: string, o?: Options): Promise<string | null>
   }
 }
 
-/** Fire-and-forget; null removes. On failure the value lives in memory for this session only. */
 export function writeItem(key: string, value: string | null, o?: Options): void {
   const secure = isSecure(o);
   // Promise.resolve().then also catches a synchronous throw (e.g. a missing native module).

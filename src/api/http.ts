@@ -2,7 +2,6 @@ import { API_BASE_URL } from '@/config';
 
 import type { ApiErrorBody } from './types';
 
-/** Server codes from the docs, plus client-side ones. */
 export type ApiErrorCodeOrClient =
   | ApiErrorBody['error']['code']
   | 'NETWORK' // request never got a response (offline, DNS, CORS, aborted)
@@ -32,22 +31,16 @@ export class ApiError extends Error {
     this.retryAfterMs = opts.retryAfterMs;
   }
 
-  /** Token missing/invalid/expired: the UI should clear the token. */
   get isUnauthorized(): boolean {
     return this.status === 401 || this.code === 'UNAUTHORIZED';
   }
 
-  /**
-   * For non-GET requests: the server may or may not have applied the request
-   * (504 TIMEOUT, or no response at all). Retry with the SAME idempotency key
-   * or poll; never treat this as "failed".
-   */
+  /** Non-GET with no answer (504 or network): it may have been applied, so retry with the same key, never treat as failed. */
   get isUnknownOutcome(): boolean {
     if (this.method === 'GET') return false;
     return this.status === 504 || this.code === 'TIMEOUT' || this.code === 'NETWORK';
   }
 
-  /** Worth retrying automatically (for idempotent/GET requests). */
   get isTransient(): boolean {
     return (
       this.code === 'NETWORK' ||

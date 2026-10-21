@@ -7,7 +7,6 @@ import { PENDING_CLAIMS_STORAGE_KEY, pendingClaimsAtom, type PendingClaim } from
 import { appStore } from './store';
 import { TOKEN_STORAGE_KEY, tokenAtom } from './token';
 
-/** False until persisted state is loaded into the store; the token gate waits for it. */
 export const hydratedAtom = atom(false);
 
 async function hydrate() {

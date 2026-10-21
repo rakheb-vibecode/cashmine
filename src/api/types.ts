@@ -1,4 +1,3 @@
-// Wire types, matching https://task-api.cashmine.io/docs exactly.
 // Amounts are decimal strings in the asset's unit and are never converted to JS numbers.
 
 export type DecimalString = string;

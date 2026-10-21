@@ -13,7 +13,6 @@ export const queryKeys = {
   claim: (id: string) => ['claim', id] as const,
 };
 
-/** Token for API calls; screens behind TokenGate always have one. */
 export function useToken(): string {
   const token = useAtomValue(tokenAtom);
   if (!token) throw new Error('useToken used outside TokenGate');

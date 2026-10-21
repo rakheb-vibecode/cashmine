@@ -14,7 +14,6 @@ const toBig = (v: AmountLike): Big => (v instanceof Big ? v : new Big(v));
 
 export const ZERO = new Big('0');
 
-/** Plain decimal string (never exponent notation): safe to send to the API. */
 export function toPlainString(v: AmountLike): string {
   return toBig(v).toFixed();
 }
@@ -26,12 +25,7 @@ const AMOUNT_RE = /^(0|[1-9][0-9]*)(\.([0-9]+))?$/;
 export type ParseError = 'empty' | 'format' | 'too_many_decimals';
 export type ParseResult = { ok: true; value: Big } | { ok: false; error: ParseError };
 
-/**
- * Strict parser matching the API rules. Whitespace is not trimmed here (the
- * input layer decides that) so what we validate is exactly what we send.
- * Decimal places are counted on the string, so "1.500" with decimals=2 is
- * rejected just like the server would.
- */
+/** Whitespace is not trimmed: what we validate is exactly what we send. */
 export function parseAmount(input: string, decimals: number): ParseResult {
   if (input === '') return { ok: false, error: 'empty' };
   const m = AMOUNT_RE.exec(input);
@@ -47,12 +41,7 @@ export type ClaimAmountResult =
   | { ok: true; amount: Big; receive: Big }
   | { ok: false; error: ClaimAmountError };
 
-/**
- * Client-side mirror of the POST /v1/claims rules:
- *   format + decimals, minAmount <= amount <= available,
- * plus amount > fee so the user receives something (receive = amount - fee).
- * The server re-checks `available` live, so this can still be rejected there.
- */
+/** Mirrors POST /v1/claims; the server still re-checks `available` live. */
 export function validateClaimAmount(args: {
   input: string;
   decimals: number;
@@ -69,7 +58,6 @@ export function validateClaimAmount(args: {
   return { ok: true, amount, receive: receiveAmount(amount, args.fee) };
 }
 
-/** The fee is taken from the claimed amount. */
 export function receiveAmount(amount: AmountLike, fee: AmountLike): Big {
   return toBig(amount).minus(toBig(fee));
 }
@@ -78,21 +66,13 @@ export function toUsd(amount: AmountLike, usdPrice: AmountLike): Big {
   return toBig(amount).times(toBig(usdPrice));
 }
 
-/** Everything the user holds in this asset: available + pending + claiming. */
 export function assetTotal(b: Pick<Balance, 'available' | 'pending' | 'claiming'>): Big {
   return toBig(b.available).plus(toBig(b.pending)).plus(toBig(b.claiming));
 }
 
 /**
- * Total in USD = sum over assets of (available + pending + claiming) * usdPrice.
- *
- * - pending is included: it is payback the user has earned, just not yet
- *   confirmed (it may still be reversed; the UI labels it separately).
- * - claiming is included: a claim moves its amount from available to claiming
- *   at once, so including it keeps the total stable when a claim is submitted
- *   instead of dipping and jumping back. It leaves the total only once the
- *   claim completes (paid out) and returns to available if the claim fails.
- * - Full precision is kept; rounding happens only in formatUsd.
+ * (available + pending + claiming) * usdPrice. Claiming stays in the total so it does not dip
+ * when a claim is submitted; it leaves only when the claim completes.
  */
 export function totalUsd(
   balances: readonly Pick<Balance, 'available' | 'pending' | 'claiming' | 'usdPrice'>[],
@@ -100,17 +80,11 @@ export function totalUsd(
   return balances.reduce((sum, b) => sum.plus(toUsd(assetTotal(b), b.usdPrice)), ZERO);
 }
 
-// ---- display ---------------------------------------------------------------
-
 function groupThousands(intPart: string): string {
   return intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-/**
- * Asset amount for display: rounded DOWN to the asset's decimals (never show
- * more than the user has), trailing zeros trimmed, thousands grouped.
- * Keeps at least `minDecimals` places (default 2) when the asset allows it.
- */
+/** Rounded down so we never show more than the user has. */
 export function formatAmount(value: AmountLike, decimals: number, minDecimals = 2): string {
   const v = toBig(value);
   const negative = v.lt(ZERO);
@@ -124,7 +98,6 @@ export function formatAmount(value: AmountLike, decimals: number, minDecimals = 
   return negative && /[1-9]/.test(body) ? `-${body}` : body;
 }
 
-/** USD for display: 2 decimals, half-up, "$1,234.56" / "-$1.20". */
 export function formatUsd(value: AmountLike): string {
   const v = toBig(value);
   const fixed = v.abs().toFixed(2, Big.roundHalfUp);
