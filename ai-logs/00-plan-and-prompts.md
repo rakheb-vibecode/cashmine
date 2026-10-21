@@ -10,6 +10,13 @@ Made in the planning session (Claude Code) at ~09:27 UTC. Full planning transcri
 - State: TanStack Query for server data, jotai `atomWithStorage` (localStorage) for the token.
 - Tests: jest-expo + pure unit tests for `src/lib/amount.ts`.
 - Work sequentially in sessions: foundation -> balances -> claim -> activity/notes.
+- Workflow change (~09:37 UTC, after prompt 1 ran): every implementation session starts with `/ponytail:ponytail full` (smallest change that fully solves it, no bloat). After each iteration, a review pass runs `/ponytail:ponytail-review` on that iteration's commits; must-fix findings get fixed and committed before the next prompt. Prompt 1 ran without ponytail, so its review is the first review pass.
+
+## Review prompt (after every iteration)
+
+```
+/ponytail:ponytail-review Review the commits from the last iteration (git log since <last reviewed sha>) for this CashMine take-home: money correctness (big.js, strict amount format, decimals, fee), claim idempotency, token never in code/build, UX states. Read .context/brief.md and .context/api.md. Fix only real issues (bugs, money/safety risks, missing required states), commit each fix separately, push, and list what you skipped and why.
+```
 
 ---
 
@@ -34,6 +41,7 @@ Commit after each logical step with clear messages (git add/commit; push at the 
 ## Prompt 2: balances (Home)
 
 ```
+/ponytail:ponytail full
 Continue in this repo (read .context/brief.md, .context/api.md, src/api, src/lib/amount.ts). Build the Home/Balances screen for a 390px phone:
 - Header: total in USD (lib totalUsd), "Updated Xs ago" from asOf (ticking), token change button.
 - List per asset: asset, available (big), pending and claiming (small), USD value. Tap -> claim screen for that asset (route /claim/[asset], stub ok).
@@ -46,6 +54,7 @@ Commit, push, then run `npx expo export -p web && eas deploy --prod` and confirm
 ## Prompt 3: claim flow
 
 ```
+/ponytail:ponytail full
 Continue in this repo. Build /claim/[asset] for 390px phone. Money is real; correctness first.
 1. Load claim-options for the asset + current balance. Show available (overlay-adjusted), min, fee, destination (select if >1, preselect first).
 2. Amount input (decimal-pad), Max button = available. Live validation with lib/amount validateClaimAmount; show inline error text. Show fee and "You receive" = amount - fee only when valid.
@@ -62,6 +71,7 @@ Add unit tests for the submit state machine if cheap (pure reducer). Commit in s
 ## Prompt 4: activity + docs (if time)
 
 ```
+/ponytail:ponytail full
 Continue in this repo. Add /activity: useInfiniteQuery over GET /v1/activity (limit 20, cursor), FlatList with onEndReached + "Load more" fallback, rows: type, exchange or "Claim", signed amount (red for negative), status badge, date. Loading/error/retry/empty states. Link from Home.
 Then write README.md (live link https://cashmine.expo.app, run locally: npm i && npx expo start --web, npm test, what works) and draft NOTES.md sections (Decisions, Working with AI with TODO placeholders for me to fill pointers, Not done/known issues). Commit, push, redeploy. Stop before 10:55 UTC.
 ```
