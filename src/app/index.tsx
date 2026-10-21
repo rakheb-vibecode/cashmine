@@ -21,7 +21,7 @@ import { applyPendingClaims, isNotInSnapshot, pendingClaimsAtom } from '@/state/
 
 function errorMessage(error: unknown): string {
   if (!isApiError(error)) return 'Something went wrong.';
-  if (error.code === 'RATE_LIMITED') return 'Too many requests. Retrying shortly…';
+  if (error.code === 'RATE_LIMITED') return 'Too many requests. Will try again automatically.';
   return error.message;
 }
 
